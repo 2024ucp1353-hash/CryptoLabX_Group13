@@ -1,0 +1,7 @@
+Hello everyone.
+
+Welcome to CryptoLabX.
+
+This toolkit will be used throughout the semester.
+
+Python programming is fun.
