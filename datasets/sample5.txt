@@ -1,0 +1,1 @@
+Cryptography dates back thousands of years. Early classical ciphers like the Caesar cipher and Vigenere cipher relied on simple substitution and transposition techniques. Modern cryptanalysis uses mathematical properties, frequency analysis, and key space search to evaluate cipher security.
