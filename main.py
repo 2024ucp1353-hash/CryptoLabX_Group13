@@ -1,5 +1,5 @@
 # ==========================================
-# CryptoLabX - Main Program
+# CryptoLabA2 - Main Program
 # Week 1 Foundation
 # ==========================================
 
@@ -8,7 +8,7 @@ from utils.logger import log_execution
 
 def display_banner():
     print("\n" + "=" * 45)
-    print("            Welcome to CryptoLabX")
+    print("            Welcome to CryptoLabA2")
     print("=" * 45)
 
 
@@ -71,7 +71,7 @@ def main():
 
         elif choice == "5":
             log_execution("5. Exit")
-            print("\nThank you for using CryptoLabX.")
+            print("\nThank you for using CryptoLabA2.")
             print("Exiting...")
             break
 

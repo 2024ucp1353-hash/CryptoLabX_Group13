@@ -1,14 +1,14 @@
-# CryptoLabX - Cryptography Laboratory Toolkit
+# CryptoLabA2 - Cryptography Laboratory Toolkit
 
 **Course**: Cryptography Laboratory (22CPP307)  
-**Assignment**: Assignment 1 (Week 1) - Build Your CryptoLabX Toolkit  
-**Repository**: `CryptoLabX_Group13`  
+**Assignment**: Assignment 1 (Week 1) - Build Your CryptoLabA2 Toolkit  
+**Repository**: `CryptoLabA2_Group13`
 
 ---
 
 ## 📌 Project Overview
 
-**CryptoLabX** is a modular python-based cryptanalysis and cryptography software framework developed as part of the Cryptography Laboratory course. This toolkit serves as a foundation for building, testing, and evaluating classical and modern cryptographic ciphers, cryptanalysis attacks, mathematical operations, and statistical frequency analysis.
+**CryptoLabA2** is a modular python-based cryptanalysis and cryptography software framework developed as part of the Cryptography Laboratory course. This toolkit serves as a foundation for building, testing, and evaluating classical and modern cryptographic ciphers, cryptanalysis attacks, mathematical operations, and statistical frequency analysis.
 
 Week 1 establishes the clean project architecture, command-line interface, file analysis engine, text datasets, and automated execution logging system.
 
@@ -24,7 +24,7 @@ Week 1 establishes the clean project architecture, command-line interface, file 
 ## 📁 Directory Structure & Architecture
 
 ```text
-CryptoLabX/
+CryptoLabA2/
 ├── classical/      # Implementations of classical ciphers (Caesar, Vigenere, Playfair, Hill, etc.)
 ├── attacks/        # Cryptanalysis attack algorithms (Frequency analysis, Brute force, Kasiski)
 ├── math/           # Mathematical helper utilities (GCD, Modular Inverse, Matrix Ops, Primes)
@@ -41,6 +41,7 @@ CryptoLabX/
 ```
 
 ### Directory Details
+
 - **`classical/`**: Holds future modules for historical substitution and transposition ciphers.
 - **`attacks/`**: Reserved for automated ciphertext-only, known-plaintext, and chosen-plaintext attack tools.
 - **`math/`**: Contains core number theory and modular arithmetic routines required for cryptographic operations.
@@ -85,9 +86,11 @@ CryptoLabX/
 ## ⚙️ How to Run
 
 ### Prerequisites
+
 - Python 3.8 or higher installed on your system.
 
 ### Running the Toolkit
+
 Run `main.py` directly from the project root directory:
 
 ```bash
@@ -95,6 +98,7 @@ python3 main.py
 ```
 
 ### Example Usage (File Analysis)
+
 1. Launch `python3 main.py`.
 2. Select Option `4` (**Analyze**).
 3. Enter the filename when prompted (e.g., `sample1.txt` or `sample2.txt`).
@@ -111,4 +115,4 @@ python3 main.py
 
 ---
 
-*CryptoLabX Toolkit - Cryptography Laboratory (22CPP307)*
+_CryptoLabA2 Toolkit - Cryptography Laboratory (22CPP307)_
