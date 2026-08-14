@@ -1,0 +1,41 @@
+Run started:2026-08-14 09:45:25.681220+00:00
+
+Test results:
+>> Issue: [B105:hardcoded_password_string] Possible hardcoded password: 'hospital_admin_secret_key_12345'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html
+   Location: secure_application/src/vulnerable_search.py:4:17
+3	# Hardcoded secret for SAST demonstration (Bandit B105)
+4	API_SECRET_KEY = "hospital_admin_secret_key_12345"
+5	
+
+--------------------------------------------------
+>> Issue: [B608:hardcoded_sql_expressions] Possible SQL injection vector through string-based query construction.
+   Severity: Medium   Confidence: Low
+   CWE: CWE-89 (https://cwe.mitre.org/data/definitions/89.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html
+   Location: secure_application/src/vulnerable_search.py:19:21
+18	    # VULNERABLE SQL QUERY (Bandit B608): String concatenation in cursor.execute allows SQL Injection
+19	    cursor.execute(f"SELECT patient_id, name, age, gender, phone, address FROM patients WHERE name LIKE '%" + search_term + "%'")
+20	    results = cursor.fetchall()
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 622
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 1
+		Medium: 1
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 1
+		Medium: 1
+		High: 0
+Files skipped (0):
