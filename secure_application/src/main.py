@@ -4,6 +4,8 @@ from patients import register_patient, view_all_patients
 from appointments import book_appointment, view_appointments
 from prescriptions import add_prescription, view_prescriptions
 from billing import create_bill, view_bills
+from medical_records import add_medical_record, view_medical_records
+
 
 def hospital_menu(user):
     """Display the main hospital management menu."""
@@ -25,7 +27,9 @@ def hospital_menu(user):
         print("6. View Prescriptions")
         print("7. Create Bill")
         print("8. View Bills")
-        print("9. Logout")
+        print("9. Add Medical Record")
+        print("10. View Medical Records")
+        print("11. Logout")
 
         choice = input("\nEnter choice: ")
 
@@ -54,6 +58,12 @@ def hospital_menu(user):
             view_bills()
 
         elif choice == "9":
+            add_medical_record()
+
+        elif choice == "10":
+            view_medical_records()
+
+        elif choice == "11":
             print("\nLogged out successfully.")
             break
 
@@ -62,6 +72,7 @@ def hospital_menu(user):
 
 
 def main():
+    """Main entry point of the Hospital Management System."""
 
     initialize_database()
 
