@@ -1,10 +1,46 @@
 from database import initialize_database
 from auth import login
+from patients import register_patient, view_all_patients
+
+
+def hospital_menu(user):
+    """Display the main hospital management menu."""
+
+    while True:
+
+        print("\n========================================")
+        print("       HOSPITAL MANAGEMENT SYSTEM")
+        print("========================================")
+
+        print(f"Logged in as: {user['username']} ({user['role']})")
+        print("----------------------------------------")
+
+        print("1. Register Patient")
+        print("2. View All Patients")
+        print("3. Logout")
+
+        choice = input("\nEnter choice: ")
+
+        if choice == "1":
+
+            register_patient()
+
+        elif choice == "2":
+
+            view_all_patients()
+
+        elif choice == "3":
+
+            print("\nLogged out successfully.")
+            break
+
+        else:
+
+            print("\nInvalid choice. Please try again.")
 
 
 def main():
 
-    # Initialize database when application starts
     initialize_database()
 
     while True:
@@ -23,8 +59,7 @@ def main():
             user = login()
 
             if user:
-                print("\nLogin functionality is working.")
-                print("Hospital modules will be added next.")
+                hospital_menu(user)
 
         elif choice == "2":
 
