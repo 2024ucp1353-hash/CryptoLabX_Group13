@@ -3,7 +3,7 @@ from auth import login
 from patients import register_patient, view_all_patients
 from appointments import book_appointment, view_appointments
 from prescriptions import add_prescription, view_prescriptions
-
+from billing import create_bill, view_bills
 
 def hospital_menu(user):
     """Display the main hospital management menu."""
@@ -23,7 +23,9 @@ def hospital_menu(user):
         print("4. View Appointments")
         print("5. Add Prescription")
         print("6. View Prescriptions")
-        print("7. Logout")
+        print("7. Create Bill")
+        print("8. View Bills")
+        print("9. Logout")
 
         choice = input("\nEnter choice: ")
 
@@ -46,6 +48,12 @@ def hospital_menu(user):
             view_prescriptions()
 
         elif choice == "7":
+            create_bill()
+
+        elif choice == "8":
+            view_bills()
+
+        elif choice == "9":
             print("\nLogged out successfully.")
             break
 
