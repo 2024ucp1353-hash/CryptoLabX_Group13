@@ -1,6 +1,7 @@
 from database import initialize_database
 from auth import login
 from patients import register_patient, view_all_patients
+from appointments import book_appointment, view_appointments
 
 
 def hospital_menu(user):
@@ -17,7 +18,9 @@ def hospital_menu(user):
 
         print("1. Register Patient")
         print("2. View All Patients")
-        print("3. Logout")
+        print("3. Book Appointment")
+        print("4. View Appointments")
+        print("5. Logout")
 
         choice = input("\nEnter choice: ")
 
@@ -30,6 +33,14 @@ def hospital_menu(user):
             view_all_patients()
 
         elif choice == "3":
+
+            book_appointment()
+
+        elif choice == "4":
+
+            view_appointments()
+
+        elif choice == "5":
 
             print("\nLogged out successfully.")
             break
