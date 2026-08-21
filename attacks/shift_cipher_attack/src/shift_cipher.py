@@ -41,7 +41,7 @@ def decrypt(ciphertext: str, key: int) -> str:
 
 if __name__ == "__main__":
     print("=== Shift Cipher Module Test ===")
-    sample_text = "The quick brown fox jumps over the lazy dog! (Shift Cipher Demo)"
+    sample_text = "The quick brown fox jumps over the lazy dog!"
     test_key = 3
     encrypted = encrypt(sample_text, test_key)
     decrypted = decrypt(encrypted, test_key)
