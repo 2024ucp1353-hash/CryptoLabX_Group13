@@ -98,7 +98,11 @@ if __name__ == "__main__":
 
     ciphertext = input("Enter ciphertext: ")
 
-    dictionary_file = "dictionary/english_words.txt"
+    import os
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    dictionary_file = os.path.join(base_dir, "..", "dictionary", "english_words.txt")
+    if not os.path.exists(dictionary_file):
+        dictionary_file = "dictionary/english_words.txt"
 
     dictionary = load_dictionary(dictionary_file)
 
