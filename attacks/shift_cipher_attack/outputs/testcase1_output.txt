@@ -1,0 +1,65 @@
+==========================================
+       SHIFT CIPHER CRYPTANALYSIS
+              CryptoLabX
+==========================================
+
+Enter plaintext: Enter key (0-25): 
+=== Encryption ===
+Plaintext  : The quick brown fox jumps over the lazy dog and the dog runs through the garden while the sun shines brightly.
+Key        : 7
+Ciphertext : Aol xbpjr iyvdu mve qbtwz vcly aol shgf kvn huk aol kvn ybuz aoyvbno aol nhyklu dopsl aol zbu zopulz iypnoasf.
+
+=== Decryption ===
+Key        : 7
+Plaintext  : The quick brown fox jumps over the lazy dog and the dog runs through the garden while the sun shines brightly.
+
+=== Brute Force Dictionary Attack ===
+Key:  0 | Score:  0 | Aol xbpjr iyvdu mve qbtwz vcly aol shgf kvn huk aol kvn ybuz aoyvbno aol nhyklu dopsl aol zbu zopulz iypnoasf.
+Key:  1 | Score:  0 | Znk waoiq hxuct lud pasvy ubkx znk rgfe jum gtj znk jum xaty znxuamn znk mgxjkt cnork znk yat ynotky hxomnzre.
+Key:  2 | Score:  0 | Ymj vznhp gwtbs ktc ozrux tajw ymj qfed itl fsi ymj itl wzsx ymwtzlm ymj lfwijs bmnqj ymj xzs xmnsjx gwnlmyqd.
+Key:  3 | Score:  0 | Xli uymgo fvsar jsb nyqtw sziv xli pedc hsk erh xli hsk vyrw xlvsykl xli kevhir almpi xli wyr wlmriw fvmklxpc.
+Key:  4 | Score:  0 | Wkh txlfn eurzq ira mxpsv ryhu wkh odcb grj dqg wkh grj uxqv wkurxjk wkh jdughq zkloh wkh vxq vklqhv euljkwob.
+Key:  5 | Score:  0 | Vjg swkem dtqyp hqz lworu qxgt vjg ncba fqi cpf vjg fqi twpu vjtqwij vjg ictfgp yjkng vjg uwp ujkpgu dtkijvna.
+Key:  6 | Score:  0 | Uif rvjdl cspxo gpy kvnqt pwfs uif mbaz eph boe uif eph svot uispvhi uif hbsefo xijmf uif tvo tijoft csjhiumz.
+Key:  7 | Score: 16 | The quick brown fox jumps over the lazy dog and the dog runs through the garden while the sun shines brightly.
+Key:  8 | Score:  0 | Sgd pthbj aqnvm enw itlor nudq sgd kzyx cnf zmc sgd cnf qtmr sgqntfg sgd fzqcdm vghkd sgd rtm rghmdr aqhfgskx.
+Key:  9 | Score:  0 | Rfc osgai zpmul dmv hsknq mtcp rfc jyxw bme ylb rfc bme pslq rfpmsef rfc eypbcl ufgjc rfc qsl qfglcq zpgefrjw.
+Key: 10 | Score:  0 | Qeb nrfzh yoltk clu grjmp lsbo qeb ixwv ald xka qeb ald orkp qeolrde qeb dxoabk tefib qeb prk pefkbp yofdeqiv.
+Key: 11 | Score:  0 | Pda mqeyg xnksj bkt fqilo kran pda hwvu zkc wjz pda zkc nqjo pdnkqcd pda cwnzaj sdeha pda oqj odejao xnecdphu.
+Key: 12 | Score:  0 | Ocz lpdxf wmjri ajs ephkn jqzm ocz gvut yjb viy ocz yjb mpin ocmjpbc ocz bvmyzi rcdgz ocz npi ncdizn wmdbcogt.
+Key: 13 | Score:  0 | Nby kocwe vliqh zir dogjm ipyl nby futs xia uhx nby xia lohm nblioab nby aulxyh qbcfy nby moh mbchym vlcabnfs.
+Key: 14 | Score:  0 | Max jnbvd ukhpg yhq cnfil hoxk max etsr whz tgw max whz kngl makhnza max ztkwxg pabex max lng labgxl ukbzamer.
+Key: 15 | Score:  0 | Lzw imauc tjgof xgp bmehk gnwj lzw dsrq vgy sfv lzw vgy jmfk lzjgmyz lzw ysjvwf ozadw lzw kmf kzafwk tjayzldq.
+Key: 16 | Score:  0 | Kyv hlztb sifne wfo aldgj fmvi kyv crqp ufx reu kyv ufx ilej kyiflxy kyv xriuve nyzcv kyv jle jyzevj sizxykcp.
+Key: 17 | Score:  0 | Jxu gkysa rhemd ven zkcfi eluh jxu bqpo tew qdt jxu tew hkdi jxhekwx jxu wqhtud mxybu jxu ikd ixydui rhywxjbo.
+Key: 18 | Score:  0 | Iwt fjxrz qgdlc udm yjbeh dktg iwt apon sdv pcs iwt sdv gjch iwgdjvw iwt vpgstc lwxat iwt hjc hwxcth qgxvwian.
+Key: 19 | Score:  0 | Hvs eiwqy pfckb tcl xiadg cjsf hvs zonm rcu obr hvs rcu fibg hvfciuv hvs uofrsb kvwzs hvs gib gvwbsg pfwuvhzm.
+Key: 20 | Score:  0 | Gur dhvpx oebja sbk whzcf bire gur ynml qbt naq gur qbt ehaf guebhtu gur tneqra juvyr gur fha fuvarf oevtugyl.
+Key: 21 | Score:  0 | Ftq cguow ndaiz raj vgybe ahqd ftq xmlk pas mzp ftq pas dgze ftdagst ftq smdpqz ituxq ftq egz etuzqe ndustfxk.
+Key: 22 | Score:  0 | Esp bftnv mczhy qzi ufxad zgpc esp wlkj ozr lyo esp ozr cfyd esczfrs esp rlcopy hstwp esp dfy dstypd mctrsewj.
+Key: 23 | Score:  0 | Dro aesmu lbygx pyh tewzc yfob dro vkji nyq kxn dro nyq bexc drbyeqr dro qkbnox grsvo dro cex crsxoc lbsqrdvi.
+Key: 24 | Score:  0 | Cqn zdrlt kaxfw oxg sdvyb xena cqn ujih mxp jwm cqn mxp adwb cqaxdpq cqn pjamnw fqrun cqn bdw bqrwnb karpqcuh.
+Key: 25 | Score:  0 | Bpm ycqks jzwev nwf rcuxa wdmz bpm tihg lwo ivl bpm lwo zcva bpzwcop bpm oizlmv epqtm bpm acv apqvma jzqopbtg.
+
+=== Brute Force Result ===
+Predicted Key     : 7
+Plaintext         : The quick brown fox jumps over the lazy dog and the dog runs through the garden while the sun shines brightly.
+Dictionary Score  : 16
+
+=== Chi-Square Attack ===
+
+=== Chi-Square Result ===
+Predicted Key     : 7
+Plaintext         : The quick brown fox jumps over the lazy dog and the dog runs through the garden while the sun shines brightly.
+Chi-Square Score  : 53.54
+
+==========================================
+              FINAL RESULTS
+==========================================
+Original Key      : 7
+Brute Force Key   : 7
+Chi-Square Key    : 7
+Original Plaintext: The quick brown fox jumps over the lazy dog and the dog runs through the garden while the sun shines brightly.
+Brute Force Text  : The quick brown fox jumps over the lazy dog and the dog runs through the garden while the sun shines brightly.
+Chi-Square Text   : The quick brown fox jumps over the lazy dog and the dog runs through the garden while the sun shines brightly.
+==========================================

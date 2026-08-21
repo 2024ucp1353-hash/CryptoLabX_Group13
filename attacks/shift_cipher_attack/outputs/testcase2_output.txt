@@ -1,0 +1,65 @@
+==========================================
+       SHIFT CIPHER CRYPTANALYSIS
+              CryptoLabX
+==========================================
+
+Enter plaintext: Enter key (0-25): 
+=== Encryption ===
+Plaintext  : Cryptography is important for secure communication.
+Key        : 13
+Ciphertext : Pelcgbtencul vf vzcbegnag sbe frpher pbzzhavpngvba.
+
+=== Decryption ===
+Key        : 13
+Plaintext  : Cryptography is important for secure communication.
+
+=== Brute Force Dictionary Attack ===
+Key:  0 | Score:  0 | Pelcgbtencul vf vzcbegnag sbe frpher pbzzhavpngvba.
+Key:  1 | Score:  0 | Odkbfasdmbtk ue uybadfmzf rad eqogdq oayygzuomfuaz.
+Key:  2 | Score:  0 | Ncjaezrclasj td txazcelye qzc dpnfcp nzxxfytnletzy.
+Key:  3 | Score:  0 | Mbizdyqbkzri sc swzybdkxd pyb comebo mywwexsmkdsyx.
+Key:  4 | Score:  0 | Lahycxpajyqh rb rvyxacjwc oxa bnldan lxvvdwrljcrxw.
+Key:  5 | Score:  0 | Kzgxbwozixpg qa quxwzbivb nwz amkczm kwuucvqkibqwv.
+Key:  6 | Score:  0 | Jyfwavnyhwof pz ptwvyahua mvy zljbyl jvttbupjhapvu.
+Key:  7 | Score:  0 | Ixevzumxgvne oy osvuxzgtz lux ykiaxk iussatoigzout.
+Key:  8 | Score:  0 | Hwduytlwfumd nx nrutwyfsy ktw xjhzwj htrrzsnhfynts.
+Key:  9 | Score:  0 | Gvctxskvetlc mw mqtsvxerx jsv wigyvi gsqqyrmgexmsr.
+Key: 10 | Score:  0 | Fubswrjudskb lv lpsruwdqw iru vhfxuh frppxqlfdwlrq.
+Key: 11 | Score:  0 | Etarvqitcrja ku korqtvcpv hqt ugewtg eqoowpkecvkqp.
+Key: 12 | Score:  0 | Dszquphsbqiz jt jnqpsubou gps tfdvsf dpnnvojdbujpo.
+Key: 13 | Score:  4 | Cryptography is important for secure communication.
+Key: 14 | Score:  0 | Bqxosnfqzogx hr hlonqszms enq rdbtqd bnlltmhbzshnm.
+Key: 15 | Score:  0 | Apwnrmepynfw gq gknmprylr dmp qcaspc amkkslgayrgml.
+Key: 16 | Score:  0 | Zovmqldoxmev fp fjmloqxkq clo pbzrob zljjrkfzxqflk.
+Key: 17 | Score:  0 | Ynulpkcnwldu eo eilknpwjp bkn oayqna ykiiqjeywpekj.
+Key: 18 | Score:  0 | Xmtkojbmvkct dn dhkjmovio ajm nzxpmz xjhhpidxvodji.
+Key: 19 | Score:  0 | Wlsjnialujbs cm cgjilnuhn zil mywoly wiggohcwuncih.
+Key: 20 | Score:  0 | Vkrimhzktiar bl bfihkmtgm yhk lxvnkx vhffngbvtmbhg.
+Key: 21 | Score:  0 | Ujqhlgyjshzq ak aehgjlsfl xgj kwumjw ugeemfauslagf.
+Key: 22 | Score:  0 | Tipgkfxirgyp zj zdgfikrek wfi jvtliv tfddleztrkzfe.
+Key: 23 | Score:  0 | Shofjewhqfxo yi ycfehjqdj veh iuskhu secckdysqjyed.
+Key: 24 | Score:  0 | Rgneidvgpewn xh xbedgipci udg htrjgt rdbbjcxrpixdc.
+Key: 25 | Score:  0 | Qfmdhcufodvm wg wadcfhobh tcf gsqifs qcaaibwqohwcb.
+
+=== Brute Force Result ===
+Predicted Key     : 13
+Plaintext         : Cryptography is important for secure communication.
+Dictionary Score  : 4
+
+=== Chi-Square Attack ===
+
+=== Chi-Square Result ===
+Predicted Key     : 13
+Plaintext         : Cryptography is important for secure communication.
+Chi-Square Score  : 29.88
+
+==========================================
+              FINAL RESULTS
+==========================================
+Original Key      : 13
+Brute Force Key   : 13
+Chi-Square Key    : 13
+Original Plaintext: Cryptography is important for secure communication.
+Brute Force Text  : Cryptography is important for secure communication.
+Chi-Square Text   : Cryptography is important for secure communication.
+==========================================

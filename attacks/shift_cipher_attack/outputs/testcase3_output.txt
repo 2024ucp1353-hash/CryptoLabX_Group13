@@ -1,0 +1,65 @@
+==========================================
+       SHIFT CIPHER CRYPTANALYSIS
+              CryptoLabX
+==========================================
+
+Enter plaintext: Enter key (0-25): 
+=== Encryption ===
+Plaintext  : Attack at dawn and defend the castle.
+Key        : 25
+Ciphertext : Zsszbj zs czvm zmc cdedmc sgd bzrskd.
+
+=== Decryption ===
+Key        : 25
+Plaintext  : Attack at dawn and defend the castle.
+
+=== Brute Force Dictionary Attack ===
+Key:  0 | Score:  0 | Zsszbj zs czvm zmc cdedmc sgd bzrskd.
+Key:  1 | Score:  0 | Yrryai yr byul ylb bcdclb rfc ayqrjc.
+Key:  2 | Score:  0 | Xqqxzh xq axtk xka abcbka qeb zxpqib.
+Key:  3 | Score:  0 | Wppwyg wp zwsj wjz zabajz pda ywopha.
+Key:  4 | Score:  0 | Voovxf vo yvri viy yzaziy ocz xvnogz.
+Key:  5 | Score:  0 | Unnuwe un xuqh uhx xyzyhx nby wumnfy.
+Key:  6 | Score:  0 | Tmmtvd tm wtpg tgw wxyxgw max vtlmex.
+Key:  7 | Score:  0 | Sllsuc sl vsof sfv vwxwfv lzw uskldw.
+Key:  8 | Score:  0 | Rkkrtb rk urne reu uvwveu kyv trjkcv.
+Key:  9 | Score:  0 | Qjjqsa qj tqmd qdt tuvudt jxu sqijbu.
+Key: 10 | Score:  0 | Piiprz pi splc pcs stutcs iwt rphiat.
+Key: 11 | Score:  0 | Ohhoqy oh rokb obr rstsbr hvs qoghzs.
+Key: 12 | Score:  0 | Nggnpx ng qnja naq qrsraq gur pnfgyr.
+Key: 13 | Score:  0 | Mffmow mf pmiz mzp pqrqzp ftq omefxq.
+Key: 14 | Score:  0 | Leelnv le olhy lyo opqpyo esp nldewp.
+Key: 15 | Score:  0 | Kddkmu kd nkgx kxn nopoxn dro mkcdvo.
+Key: 16 | Score:  0 | Jccjlt jc mjfw jwm mnonwm cqn ljbcun.
+Key: 17 | Score:  0 | Ibbiks ib liev ivl lmnmvl bpm kiabtm.
+Key: 18 | Score:  0 | Haahjr ha khdu huk klmluk aol jhzasl.
+Key: 19 | Score:  0 | Gzzgiq gz jgct gtj jklktj znk igyzrk.
+Key: 20 | Score:  0 | Fyyfhp fy ifbs fsi ijkjsi ymj hfxyqj.
+Key: 21 | Score:  0 | Exxego ex hear erh hijirh xli gewxpi.
+Key: 22 | Score:  0 | Dwwdfn dw gdzq dqg ghihqg wkh fdvwoh.
+Key: 23 | Score:  0 | Cvvcem cv fcyp cpf fghgpf vjg ecuvng.
+Key: 24 | Score:  0 | Buubdl bu ebxo boe efgfoe uif dbtumf.
+Key: 25 | Score:  4 | Attack at dawn and defend the castle.
+
+=== Brute Force Result ===
+Predicted Key     : 25
+Plaintext         : Attack at dawn and defend the castle.
+Dictionary Score  : 4
+
+=== Chi-Square Attack ===
+
+=== Chi-Square Result ===
+Predicted Key     : 25
+Plaintext         : Attack at dawn and defend the castle.
+Chi-Square Score  : 29.0
+
+==========================================
+              FINAL RESULTS
+==========================================
+Original Key      : 25
+Brute Force Key   : 25
+Chi-Square Key    : 25
+Original Plaintext: Attack at dawn and defend the castle.
+Brute Force Text  : Attack at dawn and defend the castle.
+Chi-Square Text   : Attack at dawn and defend the castle.
+==========================================
