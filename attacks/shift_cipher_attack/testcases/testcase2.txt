@@ -1,0 +1,2 @@
+Plaintext: Cryptography is important for secure communication.
+Key: 13

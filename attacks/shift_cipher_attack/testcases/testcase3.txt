@@ -1,0 +1,2 @@
+Plaintext: Attack at dawn and defend the castle.
+Key: 25
