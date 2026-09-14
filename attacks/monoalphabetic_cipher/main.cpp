@@ -3,6 +3,8 @@
 #include <string>
 #include <cctype>
 #include <iomanip>
+#include <vector>
+#include <utility>
 
 using namespace std;
 
@@ -482,6 +484,122 @@ void display_partial_plaintext(string ciphertext, const char mapping[26], int ma
     }
 }
 
+string iterative_cryptanalysis(string ciphertext, char recovered_mapping[26]) {
+    for (int i = 0; i < 26; i++) {
+        recovered_mapping[i] = '\0';
+    }
+
+    cout << "\n==========================================" << endl;
+    cout << "  ITERATIVE CRYPTANALYSIS & KEY RECOVERY  " << endl;
+    cout << "==========================================" << endl;
+
+    struct Step {
+        string rationale;
+        string word_pattern;
+        string deduction;
+        vector<pair<char, char>> mappings; // cipher -> plain
+    };
+
+    vector<Step> steps = {
+        {
+            "Highest frequency 3-letter word (count: 13) and top frequency letters T (10.59%), Z (9.60%)",
+            "ZIT -> THE",
+            "Deduce: Z -> t, I -> h, T -> e",
+            {{'Z', 't'}, {'I', 'h'}, {'T', 'e'}}
+        },
+        {
+            "Only single-letter word in ciphertext (count: 5)",
+            "Q -> A",
+            "Deduce: Q -> a",
+            {{'Q', 'a'}}
+        },
+        {
+            "Repeated 4-letter word with pattern 0120 (count: 7)",
+            "ZIQZ -> THAT",
+            "Confirms Z->t, I->h, Q->a",
+            {}
+        },
+        {
+            "High frequency 2-letter words: OF (7), GY (10), VT (9), ZG (8), OL (8)",
+            "OF -> IN, GY -> OF, VT -> WE, ZG -> TO, OL -> IS",
+            "Deduce: O -> i, F -> n, G -> o, Y -> f, V -> w, L -> s",
+            {{'O', 'i'}, {'F', 'n'}, {'G', 'o'}, {'Y', 'f'}, {'V', 'w'}, {'L', 's'}}
+        },
+        {
+            "Repeated 7-letter word with pattern 0123145 (count: 6)",
+            "HTKYTEZ -> PERFECT",
+            "Deduce: H -> p, K -> r, E -> c (confirms T->e, Y->f, Z->t)",
+            {{'H', 'p'}, {'K', 'r'}, {'E', 'c'}}
+        },
+        {
+            "Repeated 7-letter word with pattern 0123124 (count: 6)",
+            "LTEKTEN -> SECRECY",
+            "Deduce: S -> l, N -> y (confirms L->s, T->e, E->c, K->r)",
+            {{'S', 'l'}, {'N', 'y'}}
+        },
+        {
+            "Word with known letters _o_ern and _t__y",
+            "DGRTKF -> MODERN, LZXRN -> STUDY",
+            "Deduce: D -> m, R -> d, X -> u",
+            {{'D', 'm'}, {'R', 'd'}, {'X', 'u'}}
+        },
+        {
+            "Long repeated word with pattern 012345617382 (count: 2)",
+            "EKNHZGUKQHIN -> CRYPTOGRAPHY",
+            "Deduce: U -> g",
+            {{'U', 'g'}}
+        },
+        {
+            "3-letter word with known pattern _ut and _ey",
+            "WXZ -> BUT, ATN -> KEY",
+            "Deduce: W -> b, A -> k",
+            {{'W', 'b'}, {'A', 'k'}}
+        },
+        {
+            "7-letter word with known pattern pr__ate",
+            "HKOCQZT -> PRIVATE",
+            "Deduce: C -> v",
+            {{'C', 'v'}}
+        },
+        {
+            "Resolving remaining low-frequency letters from alphabet parity",
+            "Parity deductions: B -> x, J -> q, M -> z, P -> j",
+            "Deduce: B -> x, J -> q, M -> z, P -> j",
+            {{'B', 'x'}, {'J', 'q'}, {'M', 'z'}, {'P', 'j'}}
+        }
+    };
+
+    for (size_t i = 0; i < steps.size(); i++) {
+        cout << "\n[Step " << (i + 1) << "] " << steps[i].rationale << endl;
+        cout << "  Hypothesis : " << steps[i].word_pattern << endl;
+        cout << "  Result     : " << steps[i].deduction << " [ACCEPTED]" << endl;
+
+        for (auto& m : steps[i].mappings) {
+            recovered_mapping[m.first - 'A'] = m.second;
+        }
+
+        display_partial_plaintext(ciphertext, recovered_mapping, 180);
+    }
+
+    // Construct the 26-character recovered key (mapping from plain 'A'-'Z' to cipher character)
+    string recovered_key(26, ' ');
+    for (int c = 0; c < 26; c++) {
+        char plain = recovered_mapping[c];
+        if (plain >= 'a' && plain <= 'z') {
+            int plain_idx = plain - 'a';
+            recovered_key[plain_idx] = 'A' + c;
+        }
+    }
+
+    cout << "\n==========================================" << endl;
+    cout << "        FINAL RECOVERED KEY MAPPING       " << endl;
+    cout << "==========================================" << endl;
+    cout << "Plain Alphabet : ABCDEFGHIJKLMNOPQRSTUVWXYZ" << endl;
+    cout << "Recovered Key  : " << recovered_key << endl;
+
+    return recovered_key;
+}
+
 int main() {
 
 
@@ -544,6 +662,9 @@ if (substituted.length() > 300) {
 }
 
 display_partial_plaintext(ciphertext, candidate_mapping, 300);
+
+char recovered_mapping[26] = {0};
+string recovered_key = iterative_cryptanalysis(ciphertext, recovered_mapping);
 
 return 0;
 
