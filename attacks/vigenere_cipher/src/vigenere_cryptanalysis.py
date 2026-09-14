@@ -226,6 +226,33 @@ def find_best_key_length(ciphertext, candidates):
     return best_key_length, best_ic
 
 
+def frequency_analysis(group):
+    """
+    Calculate the letter frequency distribution (A-Z) for a ciphertext group.
+
+    Returns:
+        A tuple of (counts, percentages, most_frequent) where:
+        - counts: dictionary of letter -> count
+        - percentages: dictionary of letter -> percentage
+        - most_frequent: list of most frequent letter(s)
+    """
+    n = len(group)
+    counts = {chr(ord('A') + i): 0 for i in range(26)}
+
+    for char in group:
+        if 'A' <= char <= 'Z':
+            counts[char] += 1
+
+    percentages = {}
+    for letter, count in counts.items():
+        percentages[letter] = (count * 100.0 / n) if n > 0 else 0.0
+
+    max_count = max(counts.values()) if counts else 0
+    most_frequent = [letter for letter, count in counts.items() if count == max_count and max_count > 0]
+
+    return counts, percentages, most_frequent
+
+
 def main():
     # --------------------------------------
     # READ AND CLEAN CIPHERTEXT
@@ -247,7 +274,6 @@ def main():
     # --------------------------------------
 
     repeated_patterns = find_repeated_patterns(ciphertext)
-
     distances = calculate_distances(repeated_patterns)
 
     candidates = kasiski_analysis(distances)
@@ -336,6 +362,21 @@ def main():
             "IC:",
             round(calculate_ic(group), 4)
         )
+
+    # --------------------------------------
+    # GROUP FREQUENCY ANALYSIS
+    # --------------------------------------
+
+    print("\n======================================")
+    print("GROUP FREQUENCY ANALYSIS")
+    print("======================================")
+
+    for i, group in enumerate(groups):
+        counts, percentages, most_frequent = frequency_analysis(group)
+        print(f"\n--- Group {i + 1} (Length: {len(group)}, Most Frequent: {', '.join(most_frequent)}) ---")
+        top_letters = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:5]
+        top_str = ", ".join([f"{l}: {c} ({percentages[l]:.1f}%)" for l, c in top_letters if c > 0])
+        print("Top Letters:", top_str)
 
 
 if __name__ == "__main__":
