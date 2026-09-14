@@ -226,6 +226,14 @@ def find_best_key_length(ciphertext, candidates):
     return best_key_length, best_ic
 
 
+ENGLISH_LETTER_FREQUENCIES = [
+    0.08167, 0.01492, 0.02782, 0.04253, 0.12702, 0.02228, 0.02015,
+    0.06094, 0.06966, 0.00153, 0.00772, 0.04025, 0.02406, 0.06749,
+    0.07507, 0.01929, 0.00095, 0.05987, 0.06327, 0.09056, 0.02758,
+    0.00978, 0.02360, 0.00150, 0.01974, 0.00074
+]
+
+
 def frequency_analysis(group):
     """
     Calculate the letter frequency distribution (A-Z) for a ciphertext group.
@@ -251,6 +259,58 @@ def frequency_analysis(group):
     most_frequent = [letter for letter, count in counts.items() if count == max_count and max_count > 0]
 
     return counts, percentages, most_frequent
+
+
+def find_shift(group):
+    """
+    Estimate the Caesar shift for a single ciphertext group
+    using Chi-Square goodness-of-fit against standard English letter frequencies.
+
+    Returns:
+        The shift amount (0-25) corresponding to the key letter.
+    """
+    n = len(group)
+    if n == 0:
+        return 0
+
+    best_shift = 0
+    best_chi_square = float('inf')
+
+    for shift in range(26):
+        chi_square = 0.0
+        decrypted = [chr((ord(c) - ord('A') - shift) % 26 + ord('A')) for c in group]
+
+        for i in range(26):
+            target_letter = chr(ord('A') + i)
+            observed = decrypted.count(target_letter)
+            expected = ENGLISH_LETTER_FREQUENCIES[i] * n
+
+            if expected > 0:
+                chi_square += ((observed - expected) ** 2) / expected
+
+        if chi_square < best_chi_square:
+            best_chi_square = chi_square
+            best_shift = shift
+
+    return best_shift
+
+
+def find_key(groups):
+    """
+    Determine the probable Vigenère key by combining the Caesar shifts
+    discovered for each ciphertext group.
+
+    Returns:
+        The recovered key string.
+    """
+    key_chars = []
+
+    for group in groups:
+        shift = find_shift(group)
+        key_char = chr(ord('A') + shift)
+        key_chars.append(key_char)
+
+    return "".join(key_chars)
 
 
 def main():
@@ -368,15 +428,27 @@ def main():
     # --------------------------------------
 
     print("\n======================================")
-    print("GROUP FREQUENCY ANALYSIS")
+    print("GROUP FREQUENCY ANALYSIS & SHIFTS")
     print("======================================")
 
     for i, group in enumerate(groups):
         counts, percentages, most_frequent = frequency_analysis(group)
-        print(f"\n--- Group {i + 1} (Length: {len(group)}, Most Frequent: {', '.join(most_frequent)}) ---")
-        top_letters = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:5]
-        top_str = ", ".join([f"{l}: {c} ({percentages[l]:.1f}%)" for l, c in top_letters if c > 0])
-        print("Top Letters:", top_str)
+        shift = find_shift(group)
+        key_char = chr(ord('A') + shift)
+        top_letters = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:4]
+        top_str = ", ".join([f"{l}: {c}" for l, c in top_letters if c > 0])
+        print(f"Group {i + 1:2} | Length: {len(group):2} | Top: {top_str:20} | Estimated Shift: {shift:2} -> Key Letter: '{key_char}'")
+
+    # --------------------------------------
+    # RECOVER VIGENERE KEY
+    # --------------------------------------
+
+    recovered_key = find_key(groups)
+
+    print("\n======================================")
+    print("RECOVERED VIGENERE KEY")
+    print("======================================")
+    print("Probable Key:", recovered_key)
 
 
 if __name__ == "__main__":
