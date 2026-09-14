@@ -69,8 +69,65 @@ def calculate_distances(repeated_patterns):
     return distances
 
 
+def find_factors(distance):
+    """
+    Find all factors of a given distance.
+
+    Factors from 2 onwards are considered because
+    a key length of 1 is not useful for Kasiski analysis.
+    """
+
+    factors = []
+
+    for i in range(2, distance + 1):
+
+        if distance % i == 0:
+            factors.append(i)
+
+    return factors
+
+
+def kasiski_analysis(distances, max_key_length=20):
+    """
+    Perform Kasiski examination.
+
+    Counts how frequently each possible key length
+    occurs as a factor of the distances between
+    repeated patterns.
+
+    Returns:
+        A list of (key_length, count) sorted by
+        frequency in descending order.
+    """
+
+    factor_count = {}
+
+    for pattern, pattern_distances in distances.items():
+
+        for distance in pattern_distances:
+
+            factors = find_factors(distance)
+
+            for factor in factors:
+
+                if factor <= max_key_length:
+
+                    if factor not in factor_count:
+                        factor_count[factor] = 0
+
+                    factor_count[factor] += 1
+
+    candidates = sorted(
+        factor_count.items(),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+    return candidates
+
+
 def main():
-    # Read ciphertext from file
+    # Read ciphertext
     with open("ciphertext/ciphertext.txt", "r") as file:
         ciphertext = file.read()
 
@@ -83,7 +140,10 @@ def main():
 
     print("\nCiphertext Length:", len(ciphertext))
 
-    # Find repeated patterns
+    # --------------------------------------
+    # FIND REPEATED PATTERNS
+    # --------------------------------------
+
     repeated_patterns = find_repeated_patterns(ciphertext)
 
     print("\nRepeated Patterns:")
@@ -92,7 +152,10 @@ def main():
     for pattern, positions in repeated_patterns.items():
         print(pattern, "->", positions)
 
-    # Calculate distances
+    # --------------------------------------
+    # CALCULATE DISTANCES
+    # --------------------------------------
+
     distances = calculate_distances(repeated_patterns)
 
     print("\nDistances Between Repeated Patterns:")
@@ -100,6 +163,23 @@ def main():
 
     for pattern, pattern_distances in distances.items():
         print(pattern, "->", pattern_distances)
+
+    # --------------------------------------
+    # KASISKI ANALYSIS
+    # --------------------------------------
+
+    candidates = kasiski_analysis(distances)
+
+    print("\nKasiski Key Length Candidates:")
+    print("--------------------------------------")
+
+    for key_length, count in candidates:
+        print(
+            "Key Length:",
+            key_length,
+            "| Factor Count:",
+            count
+        )
 
 
 if __name__ == "__main__":
