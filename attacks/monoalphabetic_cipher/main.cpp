@@ -600,6 +600,44 @@ string iterative_cryptanalysis(string ciphertext, char recovered_mapping[26]) {
     return recovered_key;
 }
 
+bool verify_solution(string recovered_plaintext, string original_ciphertext, string recovered_key, string original_key, string original_plaintext) {
+    cout << "\n==========================================" << endl;
+    cout << "     SOLUTION VERIFICATION & INTEGRATION  " << endl;
+    cout << "==========================================" << endl;
+
+    // 1. Verify Key Match
+    bool key_matched = (recovered_key == original_key);
+    cout << "\n1. Key Verification:" << endl;
+    cout << "   Original Key  : " << original_key << endl;
+    cout << "   Recovered Key : " << recovered_key << endl;
+    cout << "   Status        : " << (key_matched ? "[PASSED - 100% Match]" : "[FAILED]") << endl;
+
+    // 2. Re-encrypt Recovered Plaintext with Recovered Key
+    string re_encrypted = encrypt(recovered_plaintext, recovered_key);
+    bool ciphertext_matched = (re_encrypted == original_ciphertext);
+    cout << "\n2. Ciphertext Re-encryption Verification:" << endl;
+    cout << "   Original Ciphertext Length  : " << original_ciphertext.length() << endl;
+    cout << "   Re-encrypted Ciphertext Len : " << re_encrypted.length() << endl;
+    cout << "   Status                      : " << (ciphertext_matched ? "[PASSED - Exact Match]" : "[FAILED]") << endl;
+
+    // 3. Plaintext Match Verification
+    bool plaintext_matched = (recovered_plaintext == original_plaintext);
+    cout << "\n3. Plaintext Recovery Verification:" << endl;
+    cout << "   Original Plaintext Length   : " << original_plaintext.length() << endl;
+    cout << "   Recovered Plaintext Length  : " << recovered_plaintext.length() << endl;
+    cout << "   Status                      : " << (plaintext_matched ? "[PASSED - 100% Recovery]" : "[FAILED]") << endl;
+
+    cout << "\n==========================================" << endl;
+    if (key_matched && ciphertext_matched && plaintext_matched) {
+        cout << "  ALL VERIFICATION CHECKS PASSED (100%)   " << endl;
+    } else {
+        cout << "  VERIFICATION CHECKS FAILED             " << endl;
+    }
+    cout << "==========================================" << endl;
+
+    return key_matched && ciphertext_matched && plaintext_matched;
+}
+
 int main() {
 
 
@@ -665,6 +703,11 @@ display_partial_plaintext(ciphertext, candidate_mapping, 300);
 
 char recovered_mapping[26] = {0};
 string recovered_key = iterative_cryptanalysis(ciphertext, recovered_mapping);
+
+// Apply full recovered mapping to obtain complete recovered plaintext
+string recovered_plaintext = apply_substitution(ciphertext, recovered_mapping);
+
+verify_solution(recovered_plaintext, ciphertext, recovered_key, key, plaintext);
 
 return 0;
 
