@@ -313,6 +313,27 @@ def find_key(groups):
     return "".join(key_chars)
 
 
+def vigenere_decrypt(ciphertext, key):
+    """
+    Decrypt the ciphertext using the Vigenère cipher key.
+
+    Returns:
+        The decrypted plaintext string.
+    """
+    plaintext = []
+    key_length = len(key)
+
+    for i, char in enumerate(ciphertext):
+        if 'A' <= char <= 'Z':
+            shift = ord(key[i % key_length].upper()) - ord('A')
+            plain_char = chr((ord(char) - ord('A') - shift) % 26 + ord('A'))
+            plaintext.append(plain_char)
+        else:
+            plaintext.append(char)
+
+    return "".join(plaintext)
+
+
 def main():
     # --------------------------------------
     # READ AND CLEAN CIPHERTEXT
@@ -449,6 +470,19 @@ def main():
     print("RECOVERED VIGENERE KEY")
     print("======================================")
     print("Probable Key:", recovered_key)
+
+    # --------------------------------------
+    # DECRYPT CIPHERTEXT
+    # --------------------------------------
+
+    recovered_plaintext = vigenere_decrypt(ciphertext, recovered_key)
+
+    print("\n======================================")
+    print("RECOVERED PLAINTEXT")
+    print("======================================")
+    print("Plaintext Length:", len(recovered_plaintext))
+    print("\nPlaintext Content:\n")
+    print(recovered_plaintext)
 
 
 if __name__ == "__main__":
