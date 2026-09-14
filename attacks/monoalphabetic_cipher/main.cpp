@@ -414,6 +414,34 @@ if (!repeated_found) {
 
 }
 
+string apply_substitution(string ciphertext, const char mapping[26]) {
+    string result = "";
+
+    for (char ch : ciphertext) {
+        if (isalpha(ch)) {
+            bool is_upper = isupper(ch);
+            char upper_ch = toupper(ch);
+            int index = upper_ch - 'A';
+
+            char mapped_char = mapping[index];
+
+            if (mapped_char != '\0') {
+                if (is_upper) {
+                    result += toupper(mapped_char);
+                } else {
+                    result += tolower(mapped_char);
+                }
+            } else {
+                result += ch;
+            }
+        } else {
+            result += ch;
+        }
+    }
+
+    return result;
+}
+
 int main() {
 
 
@@ -459,7 +487,24 @@ word_frequency_analysis(ciphertext);
 
 pattern_analysis(ciphertext);
 
+cout << "\n--- Candidate Substitution Testing ---" << endl;
+char candidate_mapping[26] = {0};
+// Testing high frequency hypothesis: Z->t, I->h, T->e
+candidate_mapping['Z' - 'A'] = 't';
+candidate_mapping['I' - 'A'] = 'h';
+candidate_mapping['T' - 'A'] = 'e';
+candidate_mapping['Q' - 'A'] = 'a';
+
+string substituted = apply_substitution(ciphertext, candidate_mapping);
+cout << "Testing candidate substitutions (Z->t, I->h, T->e, Q->a):\n";
+if (substituted.length() > 300) {
+    cout << substituted.substr(0, 300) << "..." << endl;
+} else {
+    cout << substituted << endl;
+}
+
 return 0;
 
 
 }
+
