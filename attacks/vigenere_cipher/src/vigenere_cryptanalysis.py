@@ -126,12 +126,114 @@ def kasiski_analysis(distances, max_key_length=20):
     return candidates
 
 
+def calculate_ic(text):
+    """
+    Calculate the Index of Coincidence (IC) of a text.
+
+    IC = sum(f_i * (f_i - 1)) / (N * (N - 1))
+
+    where:
+        f_i = frequency of each letter
+        N   = total number of letters
+    """
+
+    n = len(text)
+
+    if n <= 1:
+        return 0.0
+
+    frequencies = [0] * 26
+
+    for char in text:
+
+        if 'A' <= char <= 'Z':
+
+            index = ord(char) - ord('A')
+
+            frequencies[index] += 1
+
+    numerator = 0
+
+    for frequency in frequencies:
+
+        numerator += frequency * (frequency - 1)
+
+    denominator = n * (n - 1)
+
+    return numerator / denominator
+
+
+def split_into_groups(ciphertext, key_length):
+    """
+    Divide the ciphertext into groups according to
+    the candidate key length.
+
+    Each group contains characters encrypted using
+    the same key position.
+    """
+
+    groups = []
+
+    for i in range(key_length):
+
+        group = ciphertext[i::key_length]
+
+        groups.append(group)
+
+    return groups
+
+
+def calculate_average_ic(ciphertext, key_length):
+    """
+    Calculate the average Index of Coincidence
+    across all groups for a given key length.
+    """
+
+    groups = split_into_groups(ciphertext, key_length)
+
+    total_ic = 0
+
+    for group in groups:
+
+        total_ic += calculate_ic(group)
+
+    return total_ic / len(groups)
+
+
+def find_best_key_length(ciphertext, candidates):
+    """
+    Use Index of Coincidence to select the strongest
+    key length from the Kasiski candidates.
+
+    The candidate with the highest average IC is selected.
+    """
+
+    best_key_length = None
+    best_ic = 0
+
+    for key_length, count in candidates:
+
+        average_ic = calculate_average_ic(
+            ciphertext,
+            key_length
+        )
+
+        if average_ic > best_ic:
+
+            best_ic = average_ic
+            best_key_length = key_length
+
+    return best_key_length, best_ic
+
+
 def main():
-    # Read ciphertext
+    # --------------------------------------
+    # READ AND CLEAN CIPHERTEXT
+    # --------------------------------------
+
     with open("ciphertext/ciphertext.txt", "r") as file:
         ciphertext = file.read()
 
-    # Preprocess ciphertext
     ciphertext = clean_ciphertext(ciphertext)
 
     print("======================================")
@@ -141,32 +243,12 @@ def main():
     print("\nCiphertext Length:", len(ciphertext))
 
     # --------------------------------------
-    # FIND REPEATED PATTERNS
+    # KASISKI ANALYSIS
     # --------------------------------------
 
     repeated_patterns = find_repeated_patterns(ciphertext)
 
-    print("\nRepeated Patterns:")
-    print("--------------------------------------")
-
-    for pattern, positions in repeated_patterns.items():
-        print(pattern, "->", positions)
-
-    # --------------------------------------
-    # CALCULATE DISTANCES
-    # --------------------------------------
-
     distances = calculate_distances(repeated_patterns)
-
-    print("\nDistances Between Repeated Patterns:")
-    print("--------------------------------------")
-
-    for pattern, pattern_distances in distances.items():
-        print(pattern, "->", pattern_distances)
-
-    # --------------------------------------
-    # KASISKI ANALYSIS
-    # --------------------------------------
 
     candidates = kasiski_analysis(distances)
 
@@ -174,11 +256,85 @@ def main():
     print("--------------------------------------")
 
     for key_length, count in candidates:
+
         print(
             "Key Length:",
             key_length,
             "| Factor Count:",
             count
+        )
+
+    # --------------------------------------
+    # INDEX OF COINCIDENCE ANALYSIS
+    # --------------------------------------
+
+    print("\nIndex of Coincidence Analysis:")
+    print("--------------------------------------")
+
+    print("Key Length | Average IC")
+    print("--------------------------------------")
+
+    for key_length in range(1, 21):
+
+        average_ic = calculate_average_ic(
+            ciphertext,
+            key_length
+        )
+
+        print(
+            f"{key_length:10} | {average_ic:.4f}"
+        )
+
+    # --------------------------------------
+    # SELECT BEST KEY LENGTH
+    # --------------------------------------
+
+    best_key_length, best_ic = find_best_key_length(
+        ciphertext,
+        candidates
+    )
+
+    print("\nEstimated Key Length:")
+    print("--------------------------------------")
+
+    print(
+        "Key Length:",
+        best_key_length
+    )
+
+    print(
+        "Average IC:",
+        round(best_ic, 4)
+    )
+
+    # --------------------------------------
+    # SPLIT CIPHERTEXT INTO GROUPS
+    # --------------------------------------
+
+    groups = split_into_groups(
+        ciphertext,
+        best_key_length
+    )
+
+    print(
+        "\nCiphertext Groups for Key Length",
+        best_key_length
+    )
+
+    print("--------------------------------------")
+
+    for i, group in enumerate(groups):
+
+        print(
+            "Group",
+            i + 1,
+            ":",
+            group
+        )
+
+        print(
+            "IC:",
+            round(calculate_ic(group), 4)
         )
 
 
