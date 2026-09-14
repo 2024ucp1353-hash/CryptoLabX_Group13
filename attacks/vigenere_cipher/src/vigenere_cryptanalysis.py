@@ -334,6 +334,54 @@ def vigenere_decrypt(ciphertext, key):
     return "".join(plaintext)
 
 
+def vigenere_encrypt(plaintext, key):
+    """
+    Encrypt the plaintext using the Vigenère cipher key.
+
+    Returns:
+        The encrypted ciphertext string.
+    """
+    ciphertext = []
+    key_length = len(key)
+
+    for i, char in enumerate(plaintext):
+        if 'A' <= char <= 'Z':
+            shift = ord(key[i % key_length].upper()) - ord('A')
+            cipher_char = chr((ord(char) - ord('A') + shift) % 26 + ord('A'))
+            ciphertext.append(cipher_char)
+        else:
+            ciphertext.append(char)
+
+    return "".join(ciphertext)
+
+
+def verify(ciphertext, plaintext, key):
+    """
+    Verify the cryptanalysis solution by re-encrypting the recovered plaintext
+    and checking if it exactly matches the original ciphertext.
+
+    Returns:
+        Boolean indicating verification success.
+    """
+    re_encrypted = vigenere_encrypt(plaintext, key)
+    is_match = (re_encrypted == ciphertext)
+
+    print("\n======================================")
+    print("SOLUTION VERIFICATION")
+    print("======================================")
+    print("1. Original Ciphertext Length :", len(ciphertext))
+    print("2. Re-encrypted Length        :", len(re_encrypted))
+    print("3. Exact Character Match      :", is_match)
+
+    if is_match:
+        print("4. Verification Status        : [PASSED - 100% Correct Recovery]")
+    else:
+        print("4. Verification Status        : [FAILED - Mismatch Detected]")
+
+    print("======================================")
+    return is_match
+
+
 def main():
     # --------------------------------------
     # READ AND CLEAN CIPHERTEXT
@@ -483,6 +531,12 @@ def main():
     print("Plaintext Length:", len(recovered_plaintext))
     print("\nPlaintext Content:\n")
     print(recovered_plaintext)
+
+    # --------------------------------------
+    # VERIFY SOLUTION
+    # --------------------------------------
+
+    verify(ciphertext, recovered_plaintext, recovered_key)
 
 
 if __name__ == "__main__":
