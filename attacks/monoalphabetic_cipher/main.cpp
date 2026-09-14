@@ -442,6 +442,46 @@ string apply_substitution(string ciphertext, const char mapping[26]) {
     return result;
 }
 
+void display_partial_plaintext(string ciphertext, const char mapping[26], int max_chars = 300) {
+    string partial = "";
+    int mapped_count = 0;
+    int total_alpha = 0;
+
+    for (char ch : ciphertext) {
+        if (isalpha(ch)) {
+            total_alpha++;
+            bool is_upper = isupper(ch);
+            char upper_ch = toupper(ch);
+            int index = upper_ch - 'A';
+
+            char mapped_char = mapping[index];
+
+            if (mapped_char != '\0') {
+                mapped_count++;
+                if (is_upper) {
+                    partial += (char)toupper(mapped_char);
+                } else {
+                    partial += (char)tolower(mapped_char);
+                }
+            } else {
+                partial += '_';
+            }
+        } else {
+            partial += ch;
+        }
+    }
+
+    cout << "\n--- Partially Recovered Plaintext ---" << endl;
+    cout << "Recovery Progress: " << mapped_count << "/" << total_alpha << " letters ("
+         << fixed << setprecision(1) << (total_alpha > 0 ? (mapped_count * 100.0 / total_alpha) : 0.0) << "%)" << endl;
+    cout << "\nPreview:\n";
+    if (max_chars > 0 && (int)partial.length() > max_chars) {
+        cout << partial.substr(0, max_chars) << "..." << endl;
+    } else {
+        cout << partial << endl;
+    }
+}
+
 int main() {
 
 
@@ -489,7 +529,7 @@ pattern_analysis(ciphertext);
 
 cout << "\n--- Candidate Substitution Testing ---" << endl;
 char candidate_mapping[26] = {0};
-// Testing high frequency hypothesis: Z->t, I->h, T->e
+// Testing high frequency hypothesis: Z->t, I->h, T->e, Q->a
 candidate_mapping['Z' - 'A'] = 't';
 candidate_mapping['I' - 'A'] = 'h';
 candidate_mapping['T' - 'A'] = 'e';
@@ -502,6 +542,8 @@ if (substituted.length() > 300) {
 } else {
     cout << substituted << endl;
 }
+
+display_partial_plaintext(ciphertext, candidate_mapping, 300);
 
 return 0;
 
