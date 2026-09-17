@@ -47,7 +47,7 @@ CryptoLabX_Group13/
 │       └── ciphertext/
 │           └── ciphertext.txt            # Assigned polyalphabetic ciphertext (Odd Group 13)
 │
-└── secure_application/         # Assignment 2: SAST Tools & Secure Application (HMS)
+└── secure_application/         # Assignment 2 & 3: SAST Tools & Secure Application (HMS)
     ├── src/                    # HMS source code, vulnerable & patched modules
     ├── testcases/              # Automated security exploit scripts (SQLi, BAC, Path Traversal)
     ├── sast/                   # Automated Bandit SAST scan report (bandit_report.txt)
@@ -70,7 +70,7 @@ CryptoLabX_Group13/
 
 ---
 
-### 2. Lab Assignment 2: Static Application Security Testing (SAST) & Secure Application
+### 2. Lab Assignment 2 & 3: Static Application Security Testing (SAST) & Secure Application
 Located in [`secure_application/`](secure_application/README.md):
 - **Assigned Tool**: **Bandit** (Assigned for Group 13: Tool 1) for automated static security analysis of Python code.
 - **Application**: Hospital Management System (HMS) console application with authentication, patient records, appointments, prescriptions, and billing.
