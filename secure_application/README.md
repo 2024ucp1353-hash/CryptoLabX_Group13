@@ -1,7 +1,7 @@
 # Secure Application - Hospital Management System
 
 **Course**: Cryptography Laboratory (22CPP307)  
-**Assignment**: Lab Assignment 3  
+**Assignment**: Lab Assignment 2 (Static Application Security Testing - Bandit)  
 **Application**: Hospital Management System (Group 13)  
 **Team Members**:  
 - **Ayush Sthapak** (2024UCP1353)  
@@ -11,7 +11,7 @@
 
 ## 📌 Application Overview
 
-This project implements a console-based **Hospital Management System** as specified in Lab Assignment 3 ($13 \pmod{10} = 3$).
+This project implements a console-based **Hospital Management System** as specified in Lab Assignment 2 for Group 13 (Assigned SAST Tool: **Bandit**).
 
 ### Core Functionalities
 1. **Authentication (`auth.py`)**: User authentication with SQLite database storage (`users` table).
