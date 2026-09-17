@@ -127,7 +127,7 @@ Located in [`attacks/vigenere_cipher/`](attacks/vigenere_cipher/):
 python3 main.py
 ```
 
-### 2. Lab Assignment 2: Hospital Management System & Security Exploits (SAST - Bandit)
+### 2. Lab Assignment 2 & 3: Hospital Management System & Security Exploits (SAST - Bandit)
 ```bash
 # Run application
 python3 secure_application/src/main.py
