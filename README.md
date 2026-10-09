@@ -47,6 +47,11 @@ CryptoLabX_Group13/
 │       └── ciphertext/
 │           └── ciphertext.txt            # Assigned polyalphabetic ciphertext (Odd Group 13)
 │
+├── Padding_Oracle_Attack/      # Assignment 7: Padding Oracle Attack on AES-CBC
+│   ├── padding_oracle.py                 # AES-CBC PKCS#7 Padding Oracle Exploit & Analysis
+│   ├── requirements.txt                  # Python dependencies (pycryptodome)
+│   └── README.md                         # Detailed theoretical & practical attack documentation
+│
 └── secure_application/         # Assignment 2 & 3: SAST Tools & Secure Application (HMS)
     ├── src/                    # HMS source code, vulnerable & patched modules
     ├── testcases/              # Automated security exploit scripts (SQLi, BAC, Path Traversal)
@@ -120,6 +125,18 @@ Located in [`attacks/vigenere_cipher/`](attacks/vigenere_cipher/):
 
 ---
 
+### 6. Lab Assignment 7: Padding Oracle Attack on AES-CBC
+Located in [`Padding_Oracle_Attack/`](Padding_Oracle_Attack/):
+- **Core Cryptographic Concepts**: AES-128 in Cipher Block Chaining (CBC) mode with PKCS#7 padding.
+- **Attack Mechanics**:
+  1. **PKCS#7 Padding & Oracle (`make_padding_oracle`)**: Validates decrypted padding in constant scope without leaking the secret key $K$.
+  2. **Byte-by-Byte Right-to-Left Recovery (`attack_single_block`)**: Systematically alters preceding ciphertext bytes $C'_{i-1}$ to craft valid padding targets ($\text{pad\_val} = 16 - j$). Derives intermediate state $I_i = D_K(C_i)$ and recovers plaintext byte $P_i[j] = I_i[j] \oplus C_{i-1}[j]$.
+  3. **Full Plaintext Reconstruction (`recover_plaintext`)**: Iterates over all $N$ ciphertext blocks and unpads the final recovered data.
+  4. **Query Instrumentation & Analysis (`attack_and_analyze`)**: Records query counts per block, demonstrating an average of $\sim 128$ queries per byte (overall complexity $O(256 \times N)$ vs $2^{128}$ brute force).
+  5. **Countermeasures & Security Recommendations**: Implementation of Authenticated Encryption (AEAD: AES-GCM / ChaCha20-Poly1305) and Encrypt-then-MAC (HMAC-SHA256).
+
+---
+
 ## 🚀 How to Run & Test
 
 ### 1. Assignment 1: CryptoLab Toolkit CLI
@@ -165,6 +182,12 @@ g++ -std=c++17 main.cpp -o main
 # Run Kasiski examination & automated frequency cryptanalysis
 cd attacks/vigenere_cipher
 python3 src/vigenere_cryptanalysis.py
+```
+
+### 6. Lab Assignment 7: Padding Oracle Attack on AES-CBC (Python)
+```bash
+# Run padding oracle cryptanalysis, block recovery, and query analytics
+python3 Padding_Oracle_Attack/padding_oracle.py
 ```
 
 ---
