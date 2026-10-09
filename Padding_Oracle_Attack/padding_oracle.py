@@ -123,9 +123,29 @@ def attack_single_block(oracle, prev_block, target_block):
     return bytes(plaintext_block)
 
 
+# Commit 6: Complete plaintext recovery across all blocks
+def recover_plaintext(oracle, iv, ciphertext):
+    """
+    Recover the complete plaintext from an AES-CBC ciphertext using the padding oracle.
+    Iterates across all ciphertext blocks, reconstructs the full plaintext,
+    and removes PKCS#7 padding.
+    """
+    blocks = prepare_attack_blocks(iv, ciphertext)
+    recovered_bytes = bytearray()
+
+    for i in range(1, len(blocks)):
+        prev_block = blocks[i - 1]
+        target_block = blocks[i]
+        block_plaintext = attack_single_block(oracle, prev_block, target_block)
+        recovered_bytes.extend(block_plaintext)
+
+    unpadded_bytes = pkcs7_unpad(bytes(recovered_bytes))
+    return unpadded_bytes.decode("utf-8")
+
+
 # Local demonstration
 if __name__ == "__main__":
-    message = "Hello, padding oracle!"
+    message = "Cryptography Lab 7: Padding Oracle Attack demonstration on AES-CBC!"
 
     key, iv, ciphertext = encrypt_message(message)
     oracle = make_padding_oracle(key)
@@ -141,7 +161,7 @@ if __name__ == "__main__":
         label = "IV" if i == 0 else f"C{i}"
         print(f"{label}: {block.hex()}")
 
-    print("\n--- Demonstrating Byte-by-Byte Attack on Block 1 ---")
-    recovered_block1 = attack_single_block(oracle, blocks[0], blocks[1])
-    print("Recovered Block 1 (raw bytes):", recovered_block1)
-    print("Recovered Block 1 (ASCII):", recovered_block1.decode("latin1", errors="replace"))
+    print("\n--- Recovering Complete Plaintext Across All Blocks ---")
+    recovered_text = recover_plaintext(oracle, iv, ciphertext)
+    print("Recovered plaintext:", recovered_text)
+    print("Verification match:", recovered_text == message)
