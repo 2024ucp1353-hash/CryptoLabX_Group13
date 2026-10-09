@@ -143,6 +143,92 @@ def recover_plaintext(oracle, iv, ciphertext):
     return unpadded_bytes.decode("utf-8")
 
 
+# Commit 7: Track oracle queries and analyze attack results
+class OracleQueryTracker:
+    """
+    Wraps a padding oracle function to track the total number of queries
+    submitted during the cryptanalysis.
+    """
+    def __init__(self, oracle):
+        self._oracle = oracle
+        self.query_count = 0
+
+    def __call__(self, ciphertext, iv):
+        self.query_count += 1
+        return self._oracle(ciphertext, iv)
+
+    def reset(self):
+        self.query_count = 0
+
+
+def attack_and_analyze(oracle, iv, ciphertext, verbose=True):
+    """
+    Executes the padding oracle attack while instrumenting and recording
+    oracle queries per block and overall. Displays detailed metrics and analysis.
+    """
+    tracker = OracleQueryTracker(oracle)
+    blocks = prepare_attack_blocks(iv, ciphertext)
+    num_ciphertext_blocks = len(blocks) - 1
+
+    if verbose:
+        print("==================================================")
+        print("    PADDING ORACLE ATTACK EXECUTION & ANALYSIS   ")
+        print("==================================================")
+        print(f"Total Ciphertext Length : {len(ciphertext)} bytes")
+        print(f"Total Ciphertext Blocks : {num_ciphertext_blocks} (16 bytes each)")
+        print(f"IV (Hex)                : {iv.hex()}\n")
+
+    recovered_raw_blocks = []
+    block_queries = []
+
+    for i in range(1, len(blocks)):
+        prev_block = blocks[i - 1]
+        target_block = blocks[i]
+        queries_before = tracker.query_count
+
+        recovered_blk = attack_single_block(tracker, prev_block, target_block)
+        queries_for_block = tracker.query_count - queries_before
+
+        recovered_raw_blocks.append(recovered_blk)
+        block_queries.append(queries_for_block)
+
+        if verbose:
+            avg_per_byte = queries_for_block / BLOCK_SIZE
+            blk_ascii = recovered_blk.decode("latin1", errors="replace")
+            print(f"[*] Recovered Block {i}/{num_ciphertext_blocks}:")
+            print(f"    Raw Hex        : {recovered_blk.hex()}")
+            print(f"    Text Preview   : {repr(blk_ascii)}")
+            print(f"    Block Queries  : {queries_for_block} (avg {avg_per_byte:.1f} queries/byte)\n")
+
+    full_padded_bytes = b"".join(recovered_raw_blocks)
+    unpadded_bytes = pkcs7_unpad(full_padded_bytes)
+    plaintext = unpadded_bytes.decode("utf-8")
+
+    total_queries = tracker.query_count
+    total_bytes = num_ciphertext_blocks * BLOCK_SIZE
+    overall_avg = total_queries / total_bytes
+
+    if verbose:
+        print("==================================================")
+        print("                 ATTACK SUMMARY                   ")
+        print("==================================================")
+        print(f"Recovered Plaintext     : {plaintext}")
+        print(f"Total Blocks Recovered  : {num_ciphertext_blocks}")
+        print(f"Total Plaintext Bytes   : {len(unpadded_bytes)} (padded: {total_bytes})")
+        print(f"Total Oracle Queries    : {total_queries}")
+        print(f"Average Queries / Byte  : {overall_avg:.2f} (Theoretical expected: ~128)")
+        print(f"Max Possible Queries    : {total_bytes * 256} ({total_bytes} x 256)")
+        print(f"Brute Force Key Space   : 2^128 (~3.4 x 10^38)")
+        print("==================================================\n")
+
+    return {
+        "plaintext": plaintext,
+        "total_queries": total_queries,
+        "block_queries": block_queries,
+        "average_queries_per_byte": overall_avg,
+    }
+
+
 # Local demonstration
 if __name__ == "__main__":
     message = "Cryptography Lab 7: Padding Oracle Attack demonstration on AES-CBC!"
@@ -150,18 +236,7 @@ if __name__ == "__main__":
     key, iv, ciphertext = encrypt_message(message)
     oracle = make_padding_oracle(key)
 
-    blocks = prepare_attack_blocks(iv, ciphertext)
+    results = attack_and_analyze(oracle, iv, ciphertext, verbose=True)
 
-    print("Original plaintext:", message)
-    print("IV:", iv.hex())
-    print("Ciphertext:", ciphertext.hex())
-    print("Number of ciphertext blocks:", len(blocks) - 1)
-
-    for i, block in enumerate(blocks):
-        label = "IV" if i == 0 else f"C{i}"
-        print(f"{label}: {block.hex()}")
-
-    print("\n--- Recovering Complete Plaintext Across All Blocks ---")
-    recovered_text = recover_plaintext(oracle, iv, ciphertext)
-    print("Recovered plaintext:", recovered_text)
-    print("Verification match:", recovered_text == message)
+    print("Verification check against original plaintext:",
+          results["plaintext"] == message)
