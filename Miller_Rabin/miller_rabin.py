@@ -1,6 +1,7 @@
 
 import secrets
 import time
+from sympy import isprime
 
 BIT_LENGTH = 512
 DEFAULT_ROUNDS = 40
@@ -102,22 +103,21 @@ def candidate_generation_loop(
 ):
     while True:
         candidate = generate_odd_candidate(bit_length)
-
-        is_probable_prime = miller_rabin_test(candidate, rounds)
+        probable_prime = miller_rabin_test(candidate, rounds)
 
         if on_candidate_tested is not None:
-            on_candidate_tested(candidate, is_probable_prime)
+            on_candidate_tested(candidate, probable_prime)
 
-        if is_probable_prime:
+        if probable_prime:
             return candidate
 
 
-# Commits 5 and 6: Prime generation, candidate count and timing
+# Commits 5-8: Generation, timing, verification and final results
 if __name__ == "__main__":
 
     candidate_count = 0
 
-    def count_candidate(candidate, is_probable_prime):
+    def count_candidate(candidate, probable_prime):
         global candidate_count
         candidate_count += 1
 
@@ -125,8 +125,7 @@ if __name__ == "__main__":
     print("       512-BIT MILLER-RABIN PRIME GENERATION")
     print("=" * 60)
 
-    print("\nGenerating probable prime...")
-    print("Please wait...\n")
+    print("\nGenerating probable prime. Please wait...")
 
     start_time = time.perf_counter()
 
@@ -137,30 +136,45 @@ if __name__ == "__main__":
     )
 
     end_time = time.perf_counter()
-
     execution_time = end_time - start_time
 
-    print("=" * 60)
+    # Commit 7: Independent verification using SymPy
+    print("\nPerforming independent primality verification...")
+
+    verification_start = time.perf_counter()
+    independent_result = isprime(found_prime)
+    verification_time = time.perf_counter() - verification_start
+
+    exact_bit_length = found_prime.bit_length() == BIT_LENGTH
+    own_test_result = miller_rabin_test(found_prime, DEFAULT_ROUNDS)
+
+    print("\n" + "=" * 60)
     print("              EXPERIMENTAL RESULTS")
     print("=" * 60)
 
-    print(f"\nGenerated Prime:\n{found_prime}")
+    print("\nGenerated Prime:")
+    print(found_prime)
 
     print("\nResult Summary:")
     print("-" * 60)
-    print(f"{'Parameter':<30} {'Value'}")
+    print(f"{'Parameter':<32} {'Result'}")
     print("-" * 60)
-    print(f"{'Assigned bit length':<30} {BIT_LENGTH}")
-    print(f"{'Actual bit length':<30} {found_prime.bit_length()}")
-    print(f"{'Candidates tested':<30} {candidate_count}")
-    print(f"{'Miller-Rabin rounds':<30} {DEFAULT_ROUNDS}")
-    print(f"{'Execution time (seconds)':<30} {execution_time:.6f}")
+    print(f"{'Assigned bit length':<32} {BIT_LENGTH}")
+    print(f"{'Actual bit length':<32} {found_prime.bit_length()}")
+    print(f"{'Candidates tested':<32} {candidate_count}")
+    print(f"{'Miller-Rabin rounds':<32} {DEFAULT_ROUNDS}")
+    print(f"{'Generation time (seconds)':<32} {execution_time:.6f}")
     print("-" * 60)
 
-    print("\nCandidate validation:",
-          validate_candidate_properties(found_prime))
+    print("\nIndependent Verification:")
+    print("-" * 60)
+    print(f"Exact 512-bit length: {exact_bit_length}")
+    print(f"Our Miller-Rabin test: {own_test_result}")
+    print(f"SymPy independent check: {independent_result}")
+    print(f"Verification time: {verification_time:.6f} seconds")
+    print("-" * 60)
 
-    print("Miller-Rabin verification:",
-          miller_rabin_test(found_prime, DEFAULT_ROUNDS))
-
-    print("\nPrime generation completed successfully!")
+    if exact_bit_length and own_test_result and independent_result:
+        print("\nSUCCESS: Generated prime passed all verification checks!")
+    else:
+        print("\nERROR: Verification failed!")
