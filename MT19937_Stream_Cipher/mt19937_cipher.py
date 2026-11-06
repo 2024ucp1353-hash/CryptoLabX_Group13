@@ -74,13 +74,97 @@ def validate_16bit_seed(seed: int) -> bool:
     return isinstance(seed, int) and 0 <= seed < SEED_16BIT_MAX
 
 
+# ==============================================================================
+# Commit 2: MT19937 Stream Cipher (Encryption & Decryption)
+# ==============================================================================
+def mt19937_stream_cipher(data: bytes, seed: int) -> bytes:
+    """
+    MT19937 symmetric stream cipher engine.
+
+    Generates one 8-bit keystream value per input byte using MT19937 and XORs
+    it with the data. Because XOR is an involution (A ^ K ^ K = A), the exact
+    same transformation performs both encryption and decryption when seeded
+    identically.
+
+    Args:
+        data: Plaintext bytes (for encryption) or ciphertext bytes (for decryption).
+        seed: Integer seed for MT19937 keystream generation.
+
+    Returns:
+        bytes: Transformed ciphertext or decrypted plaintext bytes.
+    """
+    if isinstance(data, str):
+        data = data.encode("utf-8")
+
+    rng = init_mt19937(seed)
+    return bytes(b ^ extract_keystream_byte(rng) for b in data)
+
+
+def encrypt(plaintext: bytes, seed: int) -> bytes:
+    """
+    Encrypts plaintext bytes using the MT19937 stream cipher.
+
+    Args:
+        plaintext: Plaintext bytes to encrypt.
+        seed: 16-bit or integer seed.
+
+    Returns:
+        bytes: Resulting ciphertext.
+    """
+    return mt19937_stream_cipher(plaintext, seed)
+
+
+def decrypt(ciphertext: bytes, seed: int) -> bytes:
+    """
+    Decrypts ciphertext bytes using the MT19937 stream cipher.
+    Re-uses the symmetric stream cipher function with the same seed.
+
+    Args:
+        ciphertext: Ciphertext bytes to decrypt.
+        seed: Key/seed used during encryption.
+
+    Returns:
+        bytes: Decrypted plaintext.
+    """
+    return mt19937_stream_cipher(ciphertext, seed)
+
+
+def verify_cipher_roundtrip(message: bytes, seed: int) -> bool:
+    """
+    Verifies that encryption followed by decryption recovers the exact original message.
+
+    Args:
+        message: Test message bytes.
+        seed: Seed integer.
+
+    Returns:
+        bool: True if round-trip decryption matches original message.
+    """
+    ciphertext = encrypt(message, seed)
+    recovered = decrypt(ciphertext, seed)
+    return recovered == message
+
+
 if __name__ == "__main__":
     print("[*] Assignment 10: MT19937 Stream Cipher & Predictable Token Attack")
     print(f"[*] 16-bit Seed Range: [0, {SEED_16BIT_MAX - 1}] (Total: {SEED_16BIT_MAX})")
 
-    # Sample MT19937 initialization & keystream extraction demo
+    # Commit 1 Demo
     sample_seed = 12345
-    print(f"[*] Testing MT19937 initialization with seed = {sample_seed}...")
+    print(f"\n--- [Commit 1] MT19937 Initialization & 8-bit Keystream ---")
     sample_keystream = generate_keystream(sample_seed, length=16)
-    print(f"    Extracted 16-byte keystream (hex): {sample_keystream.hex()}")
-    print(f"    Seed validity check: {validate_16bit_seed(sample_seed)}")
+    print(f"[*] Seed: {sample_seed}")
+    print(f"[*] 16-byte keystream (hex): {sample_keystream.hex()}")
+    print(f"[*] Seed validity check: {validate_16bit_seed(sample_seed)}")
+
+    # Commit 2 Demo
+    print(f"\n--- [Commit 2] Stream Cipher Encryption & Decryption ---")
+    test_message = b"Cryptography Laboratory: Assignment 10 Stream Cipher Verification!"
+    test_seed = 42424
+    ciphertext = encrypt(test_message, test_seed)
+    decrypted = decrypt(ciphertext, test_seed)
+
+    print(f"[*] Test Plaintext        : {test_message}")
+    print(f"[*] Ciphertext (hex)      : {ciphertext.hex()}")
+    print(f"[*] Decrypted Plaintext   : {decrypted}")
+    print(f"[*] Decryption matches original: {decrypted == test_message}")
