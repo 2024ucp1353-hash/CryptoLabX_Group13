@@ -288,41 +288,25 @@ def candidate_generation_loop(
 
 
 if __name__ == "__main__":
-    print(f"[*] Assignment 8: Miller-Rabin Primality Test")
-    print(f"[*] Assigned Bit Length: {BIT_LENGTH}")
-    print(f"[*] Miller-Rabin Security Rounds: {DEFAULT_ROUNDS}")
 
-    # Commit 1 Demo
-    sample_candidate = generate_odd_candidate(BIT_LENGTH)
-    print(f"\n--- [Commit 1] Candidate Generation ---")
-    print(f"[*] Sample Candidate ({sample_candidate.bit_length()} bits):")
-    print(f"    {sample_candidate}")
-    print(f"[*] Validated (Odd & Exactly {BIT_LENGTH} bits): "
-          f"{validate_candidate_properties(sample_candidate, BIT_LENGTH)}")
+    print("\n===== 512-BIT MILLER-RABIN PRIME GENERATION =====")
 
-    # Commit 2 Demo
-    print(f"\n--- [Commit 2] Fast Modular Exponentiation ---")
-    test_base, test_exp = 2, 65537
-    calc_res = modular_exponentiation(test_base, test_exp, sample_candidate)
-    expected_res = pow(test_base, test_exp, sample_candidate)
-    print(f"[*] Calculating ({test_base}^{test_exp}) mod candidate...")
-    print(f"    Correctness check vs pow(): {calc_res == expected_res}")
+    candidate_count = 0
 
-    # Commit 3 Demo
-    print(f"\n--- [Commit 3] Miller-Rabin Primality Test Verification ---")
-    m31 = (1 << 31) - 1
-    s_m31, d_m31 = factorize_n_minus_1(m31)
-    print(f"[*] Decomposition of M31 (2147483647): n-1 = 2^{s_m31} * {d_m31}")
-    print(f"[*] M31 is probable prime: {miller_rabin_test(m31, rounds=20)}")
-    print(f"[*] Carmichael number 561 is composite: {not miller_rabin_test(561, bases=[2, 3])}")
-    print(f"[*] Random candidate passes Miller-Rabin: {miller_rabin_test(sample_candidate, rounds=10)}")
+    def count_candidate(candidate, is_probable_prime):
+        global candidate_count
+        candidate_count += 1
 
-    # Commit 4 Demo
-    print(f"\n--- [Commit 4] Candidate Generation Loop ---")
-    print(f"[*] Running candidate generation loop to find a {BIT_LENGTH}-bit probable prime...")
-    found_prime = candidate_generation_loop(bit_length=BIT_LENGTH, rounds=DEFAULT_ROUNDS)
-    print(f"[+] Found {found_prime.bit_length()}-bit probable prime!")
-    print(f"    Prime: {found_prime}")
-    print(f"[*] Verification (Odd & {BIT_LENGTH} bits): "
-          f"{validate_candidate_properties(found_prime, BIT_LENGTH)}")
-    print(f"[*] Passes Miller-Rabin test: {miller_rabin_test(found_prime, rounds=DEFAULT_ROUNDS)}")
+    print("\nGenerating probable prime...")
+
+    found_prime = candidate_generation_loop(
+        bit_length=BIT_LENGTH,
+        rounds=DEFAULT_ROUNDS,
+        on_candidate_tested=count_candidate
+    )
+
+    print("\nPrime generation completed!")
+    print("Generated prime:", found_prime)
+    print("Bit length:", found_prime.bit_length())
+    print("Candidates tested:", candidate_count)
+    print("Miller-Rabin rounds:", DEFAULT_ROUNDS)
