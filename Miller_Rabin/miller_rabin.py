@@ -1,28 +1,3 @@
-"""
-Cryptography Laboratory (22CPP307) - Assignment 8
-Cryptographic Prime Generation Using Miller–Rabin Primality Test
-
-Group 13:
-- Ayush Sthapak (2024UCP1353)
-- Rishika Vijay (2024UCP1398)
-
-Commit 1: Setup project structure and input handling
-- Create the Python file/notebook structure.
-- Import required libraries.
-- Set the assigned bit length to 512.
-- Handle random odd candidate generation.
-
-Commit 2: Implement modular exponentiation
-- Implement fast modular exponentiation (Square-and-Multiply).
-- Calculate a^d mod n efficiently for large integers.
-- Handle large 512-bit integers without memory overhead or integer overflow.
-
-Commit 3: Implement Miller–Rabin primality test
-- Factorize n - 1 = 2^s * d, where d is odd.
-- Implement the Miller-Rabin witness test.
-- Test candidates using multiple bases (random CSPRNG bases or specified base list).
-"""
-
 import secrets
 import random
 import sys
@@ -270,11 +245,54 @@ def miller_rabin_test(n: int, rounds: int = DEFAULT_ROUNDS, bases: list[int] = N
     return True  # Probable prime
 
 
+# ==============================================================================
+# Commit 4: Candidate Generation Loop
+# ==============================================================================
+def candidate_generation_loop(
+    bit_length: int = BIT_LENGTH,
+    rounds: int = DEFAULT_ROUNDS,
+    on_candidate_tested=None
+) -> int:
+    """
+    Candidate Generation Loop:
+    Repeatedly generates random odd candidates of the assigned bit length,
+    applies the Miller-Rabin primality test, rejects composite candidates,
+    and repeats until a probable prime candidate is found.
+
+    Args:
+        bit_length: Assigned bit length of the candidate (default: 512).
+        rounds: Number of Miller-Rabin testing rounds per candidate (default: 40).
+        on_candidate_tested: Optional callback hook invoked as
+                             on_candidate_tested(candidate, is_probable_prime)
+                             after each candidate is tested. Useful for tracking
+                             metrics in subsequent steps.
+
+    Returns:
+        int: A probable prime integer of exactly `bit_length` bits that passed
+             all Miller-Rabin testing rounds.
+    """
+    while True:
+        # Step 1: Generate random odd candidate
+        candidate = generate_odd_candidate(bit_length)
+
+        # Step 2: Apply the Miller-Rabin primality test
+        is_probable_prime = miller_rabin_test(candidate, rounds=rounds)
+
+        # Optional hook for metrics tracking
+        if on_candidate_tested is not None:
+            on_candidate_tested(candidate, is_probable_prime)
+
+        # Step 3: Reject composite candidates and repeat until a probable prime is found
+        if is_probable_prime:
+            return candidate
+
+
 if __name__ == "__main__":
     print(f"[*] Assignment 8: Miller-Rabin Primality Test")
     print(f"[*] Assigned Bit Length: {BIT_LENGTH}")
+    print(f"[*] Miller-Rabin Security Rounds: {DEFAULT_ROUNDS}")
 
-    # Commit 1
+    # Commit 1 Demo
     sample_candidate = generate_odd_candidate(BIT_LENGTH)
     print(f"\n--- [Commit 1] Candidate Generation ---")
     print(f"[*] Sample Candidate ({sample_candidate.bit_length()} bits):")
@@ -282,7 +300,7 @@ if __name__ == "__main__":
     print(f"[*] Validated (Odd & Exactly {BIT_LENGTH} bits): "
           f"{validate_candidate_properties(sample_candidate, BIT_LENGTH)}")
 
-    # Commit 2
+    # Commit 2 Demo
     print(f"\n--- [Commit 2] Fast Modular Exponentiation ---")
     test_base, test_exp = 2, 65537
     calc_res = modular_exponentiation(test_base, test_exp, sample_candidate)
@@ -290,17 +308,21 @@ if __name__ == "__main__":
     print(f"[*] Calculating ({test_base}^{test_exp}) mod candidate...")
     print(f"    Correctness check vs pow(): {calc_res == expected_res}")
 
-    # Commit 3
+    # Commit 3 Demo
     print(f"\n--- [Commit 3] Miller-Rabin Primality Test Verification ---")
-    # Test known prime: Mersenne prime M31 = 2^31 - 1 = 2147483647
     m31 = (1 << 31) - 1
     s_m31, d_m31 = factorize_n_minus_1(m31)
     print(f"[*] Decomposition of M31 (2147483647): n-1 = 2^{s_m31} * {d_m31}")
     print(f"[*] M31 is probable prime: {miller_rabin_test(m31, rounds=20)}")
+    print(f"[*] Carmichael number 561 is composite: {not miller_rabin_test(561, bases=[2, 3])}")
+    print(f"[*] Random candidate passes Miller-Rabin: {miller_rabin_test(sample_candidate, rounds=10)}")
 
-    # Test known composite / Carmichael number: 561 = 3 * 11 * 17
-    carmichael_561 = 561
-    print(f"[*] Carmichael number 561 is composite: {not miller_rabin_test(carmichael_561, bases=[2, 3])}")
-
-    # Test Miller-Rabin on our random 512-bit candidate (expected composite almost certainly)
-    print(f"[*] Random 512-bit candidate passes Miller-Rabin: {miller_rabin_test(sample_candidate, rounds=10)}")
+    # Commit 4 Demo
+    print(f"\n--- [Commit 4] Candidate Generation Loop ---")
+    print(f"[*] Running candidate generation loop to find a {BIT_LENGTH}-bit probable prime...")
+    found_prime = candidate_generation_loop(bit_length=BIT_LENGTH, rounds=DEFAULT_ROUNDS)
+    print(f"[+] Found {found_prime.bit_length()}-bit probable prime!")
+    print(f"    Prime: {found_prime}")
+    print(f"[*] Verification (Odd & {BIT_LENGTH} bits): "
+          f"{validate_candidate_properties(found_prime, BIT_LENGTH)}")
+    print(f"[*] Passes Miller-Rabin test: {miller_rabin_test(found_prime, rounds=DEFAULT_ROUNDS)}")
