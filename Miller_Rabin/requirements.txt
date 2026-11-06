@@ -1,0 +1,4 @@
+# Cryptography Laboratory (22CPP307) - Assignment 8
+# Cryptographic Prime Generation Using Miller-Rabin
+sympy>=1.12
+pycryptodome>=3.20.0
