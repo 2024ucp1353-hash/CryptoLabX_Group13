@@ -221,6 +221,91 @@ def create_encryption_challenge(
     }
 
 
+# ==============================================================================
+# Commit 4: Brute-Force Seed Recovery (Known-Plaintext Attack)
+# ==============================================================================
+def brute_force_seed_recovery(
+    ciphertext: bytes,
+    known_pattern: bytes = KNOWN_TARGET_PATTERN,
+    max_seeds: int = SEED_16BIT_MAX
+) -> Dict[str, object]:
+    """
+    Recovers the secret 16-bit MT19937 seed via brute-force key search.
+
+    The 16-bit keyspace consists of only 2^16 = 65,536 candidates.
+    For each candidate seed:
+    1. An MT19937 generator is initialized with the candidate seed.
+    2. A candidate keystream matching the length of the ciphertext is generated.
+    3. The ciphertext is decrypted and checked for the known 14 consecutive 'A's.
+    4. Upon discovery, the matching seed is recovered and used to fully decrypt
+       the complete ciphertext.
+
+    Args:
+        ciphertext: The observed ciphertext bytes.
+        known_pattern: The known sequence within the plaintext (default: 14 'A's).
+        max_seeds: Maximum seed value to search up to (default: 65,536).
+
+    Returns:
+        Dict[str, object]: Result dictionary containing 'recovered_seed',
+                           'recovered_plaintext', 'seeds_tested', and 'elapsed_time'.
+    """
+    start_time = time.perf_counter()
+    ciphertext_len = len(ciphertext)
+
+    for candidate_seed in range(max_seeds):
+        rng = init_mt19937(candidate_seed)
+        candidate_plaintext = bytes(c ^ extract_keystream_byte(rng) for c in ciphertext)
+
+        # Check if the known pattern appears anywhere in the candidate plaintext
+        if known_pattern in candidate_plaintext:
+            elapsed = time.perf_counter() - start_time
+            return {
+                "match_found": True,
+                "recovered_seed": candidate_seed,
+                "recovered_plaintext": candidate_plaintext,
+                "seeds_tested": candidate_seed + 1,
+                "total_search_space": max_seeds,
+                "elapsed_time": elapsed
+            }
+
+    elapsed = time.perf_counter() - start_time
+    return {
+        "match_found": False,
+        "recovered_seed": None,
+        "recovered_plaintext": None,
+        "seeds_tested": max_seeds,
+        "total_search_space": max_seeds,
+        "elapsed_time": elapsed
+    }
+
+
+def verify_recovered_seed(
+    recovered_seed: int,
+    ciphertext: bytes,
+    original_plaintext: Optional[bytes] = None,
+    known_pattern: bytes = KNOWN_TARGET_PATTERN
+) -> bool:
+    """
+    Verifies that the recovered seed correctly decrypts the ciphertext
+    and matches the known pattern and original plaintext.
+
+    Args:
+        recovered_seed: The recovered 16-bit seed.
+        ciphertext: The original ciphertext.
+        original_plaintext: Optional original plaintext to verify exact match.
+        known_pattern: Known pattern that must be present.
+
+    Returns:
+        bool: True if verification passes.
+    """
+    decrypted = decrypt(ciphertext, recovered_seed)
+    has_pattern = known_pattern in decrypted
+
+    if original_plaintext is not None:
+        return has_pattern and (decrypted == original_plaintext)
+    return has_pattern
+
+
 if __name__ == "__main__":
     print("[*] Assignment 10: MT19937 Stream Cipher & Predictable Token Attack")
     print(f"[*] 16-bit Seed Range: [0, {SEED_16BIT_MAX - 1}] (Total: {SEED_16BIT_MAX})")
@@ -252,3 +337,22 @@ if __name__ == "__main__":
     print(f"[*] Complete Plaintext           : {challenge['plaintext']} (total len: {len(challenge['plaintext'])})")
     print(f"[*] Target Known Suffix          : {challenge['pattern']}")
     print(f"[*] Resulting Ciphertext (hex)   : {challenge['ciphertext'].hex()}")
+
+    # Commit 4 Demo
+    print(f"\n--- [Commit 4] Brute-Force Seed Recovery ---")
+    print(f"[*] Searching across all 65,536 candidate 16-bit seeds...")
+    attack_res = brute_force_seed_recovery(challenge["ciphertext"], known_pattern=challenge["pattern"])
+
+    print(f"[+] Attack Success               : {attack_res['match_found']}")
+    print(f"[+] Recovered Seed               : {attack_res['recovered_seed']} (Original: {challenge['seed']})")
+    print(f"[+] Recovered Plaintext          : {attack_res['recovered_plaintext']}")
+    print(f"[*] Seeds Tested Before Match    : {attack_res['seeds_tested']} / {attack_res['total_search_space']}")
+    print(f"[*] Search Time                  : {attack_res['elapsed_time']:.3f} seconds")
+
+    # Verification
+    is_verified = verify_recovered_seed(
+        attack_res["recovered_seed"],
+        challenge["ciphertext"],
+        original_plaintext=challenge["plaintext"]
+    )
+    print(f"[*] Seed & Decryption Verified   : {is_verified}")
