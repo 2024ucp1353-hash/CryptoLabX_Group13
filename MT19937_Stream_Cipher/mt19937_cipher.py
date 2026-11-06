@@ -2,13 +2,16 @@ import random
 import secrets
 import string
 import time
-from typing import Optional
+from typing import Optional, Tuple, Dict
 
 # ==============================================================================
 # Configuration & Constants
 # ==============================================================================
 # Seed search space for 16-bit seeds (2^16 = 65,536)
 SEED_16BIT_MAX = 65536
+
+# Known target pattern of 14 consecutive 'A' characters
+KNOWN_TARGET_PATTERN = b"A" * 14
 
 
 # ==============================================================================
@@ -145,6 +148,79 @@ def verify_cipher_roundtrip(message: bytes, seed: int) -> bool:
     return recovered == message
 
 
+# ==============================================================================
+# Commit 3: Plaintext Generation & Encryption
+# ==============================================================================
+def generate_16bit_seed() -> int:
+    """
+    Generates a cryptographically strong random 16-bit seed in [0, 65535].
+
+    Returns:
+        int: A 16-bit integer seed.
+    """
+    return secrets.randbelow(SEED_16BIT_MAX)
+
+
+def generate_target_plaintext(
+    min_prefix: int = 5,
+    max_prefix: int = 20,
+    known_pattern: bytes = KNOWN_TARGET_PATTERN
+) -> Tuple[bytes, str]:
+    """
+    Generates a plaintext with a random 5–20 character printable prefix
+    followed by 14 consecutive 'A' characters.
+
+    Args:
+        min_prefix: Minimum prefix length (default: 5).
+        max_prefix: Maximum prefix length (default: 20).
+        known_pattern: Target known pattern (default: 14 'A's).
+
+    Returns:
+        Tuple[bytes, str]: Complete plaintext as bytes and the generated prefix string.
+    """
+    prefix_length = secrets.randbelow(max_prefix - min_prefix + 1) + min_prefix
+    alphabet = string.ascii_letters + string.digits
+    prefix_str = "".join(secrets.choice(alphabet) for _ in range(prefix_length))
+    plaintext = prefix_str.encode("utf-8") + known_pattern
+
+    return plaintext, prefix_str
+
+
+def create_encryption_challenge(
+    seed: Optional[int] = None,
+    min_prefix: int = 5,
+    max_prefix: int = 20
+) -> Dict[str, object]:
+    """
+    Generates a challenge consisting of random plaintext (prefix + 14 'A's),
+    a random 16-bit seed, and the resulting MT19937 ciphertext.
+
+    Args:
+        seed: Optional specific 16-bit seed. If None, a random 16-bit seed is generated.
+        min_prefix: Minimum prefix length (default: 5).
+        max_prefix: Maximum prefix length (default: 20).
+
+    Returns:
+        Dict: Dictionary containing 'plaintext', 'prefix', 'seed', and 'ciphertext'.
+    """
+    if seed is None:
+        seed = generate_16bit_seed()
+
+    if not validate_16bit_seed(seed):
+        raise ValueError(f"Seed {seed} is not a valid 16-bit integer.")
+
+    plaintext, prefix_str = generate_target_plaintext(min_prefix, max_prefix)
+    ciphertext = encrypt(plaintext, seed)
+
+    return {
+        "plaintext": plaintext,
+        "prefix": prefix_str,
+        "seed": seed,
+        "ciphertext": ciphertext,
+        "pattern": KNOWN_TARGET_PATTERN
+    }
+
+
 if __name__ == "__main__":
     print("[*] Assignment 10: MT19937 Stream Cipher & Predictable Token Attack")
     print(f"[*] 16-bit Seed Range: [0, {SEED_16BIT_MAX - 1}] (Total: {SEED_16BIT_MAX})")
@@ -163,8 +239,16 @@ if __name__ == "__main__":
     test_seed = 42424
     ciphertext = encrypt(test_message, test_seed)
     decrypted = decrypt(ciphertext, test_seed)
-
     print(f"[*] Test Plaintext        : {test_message}")
     print(f"[*] Ciphertext (hex)      : {ciphertext.hex()}")
     print(f"[*] Decrypted Plaintext   : {decrypted}")
     print(f"[*] Decryption matches original: {decrypted == test_message}")
+
+    # Commit 3 Demo
+    print(f"\n--- [Commit 3] Plaintext Generation & Encryption ---")
+    challenge = create_encryption_challenge()
+    print(f"[*] Generated Random 16-bit Seed : {challenge['seed']}")
+    print(f"[*] Generated Prefix             : '{challenge['prefix']}' (len: {len(challenge['prefix'])})")
+    print(f"[*] Complete Plaintext           : {challenge['plaintext']} (total len: {len(challenge['plaintext'])})")
+    print(f"[*] Target Known Suffix          : {challenge['pattern']}")
+    print(f"[*] Resulting Ciphertext (hex)   : {challenge['ciphertext'].hex()}")
