@@ -11,6 +11,11 @@ Commit 1: Setup project structure and input handling
 - Import required libraries.
 - Set the assigned bit length to 512.
 - Handle random odd candidate generation.
+
+Commit 2: Implement modular exponentiation
+- Implement fast modular exponentiation (Square-and-Multiply).
+- Calculate a^d mod n efficiently for large integers.
+- Handle large 512-bit integers without memory overhead or integer overflow.
 """
 
 import secrets
@@ -75,13 +80,81 @@ def validate_candidate_properties(candidate: int, expected_bits: int = BIT_LENGT
     return is_odd and has_exact_bits
 
 
+# ==============================================================================
+# Commit 2: Fast Modular Exponentiation (Square-and-Multiply)
+# ==============================================================================
+def modular_exponentiation(base: int, exponent: int, modulus: int) -> int:
+    """
+    Computes (base^exponent) mod modulus using the Square-and-Multiply algorithm
+    (binary exponentiation).
+
+    This efficiently calculates a^d mod n for large 512-bit integers in O(log exponent)
+    time, avoiding the computation of astronomical intermediate values by reducing
+    modulo `modulus` at every multiplication step.
+
+    Algorithm:
+    1. Initialize result = 1.
+    2. Reduce base modulo modulus: base = base % modulus.
+    3. While exponent > 0:
+        a. If current lowest bit of exponent is 1 (exponent & 1):
+           result = (result * base) % modulus
+        b. Square the base:
+           base = (base * base) % modulus
+        c. Shift exponent right by 1 bit:
+           exponent >>= 1
+    4. Return result.
+
+    Args:
+        base: The base integer (a).
+        exponent: The exponent integer (d >= 0).
+        modulus: The positive modulus integer (n > 0).
+
+    Returns:
+        int: (base^exponent) % modulus.
+    """
+    if modulus <= 0:
+        raise ValueError("Modulus must be a positive integer.")
+    if modulus == 1:
+        return 0
+    if exponent < 0:
+        raise ValueError("Negative exponents are not supported in integer modular arithmetic.")
+    if exponent == 0:
+        return 1
+
+    result = 1
+    base = base % modulus
+
+    while exponent > 0:
+        # If the lowest bit is set, multiply current base into result
+        if exponent & 1:
+            result = (result * base) % modulus
+        # Square the base for the next bit position
+        base = (base * base) % modulus
+        # Shift exponent right by 1 bit
+        exponent >>= 1
+
+    return result
+
+
 if __name__ == "__main__":
     print(f"[*] Assignment 8: Miller-Rabin Primality Test")
     print(f"[*] Assigned Bit Length: {BIT_LENGTH}")
-    
-    # Generate and test a sample candidate
+
+    # Test Candidate Generation (Commit 1)
     sample_candidate = generate_odd_candidate(BIT_LENGTH)
-    print(f"[*] Sample Candidate Generated ({sample_candidate.bit_length()} bits):")
+    print(f"\n--- [Commit 1] Candidate Generation ---")
+    print(f"[*] Sample Candidate ({sample_candidate.bit_length()} bits):")
     print(f"    {sample_candidate}")
-    print(f"[*] Validation Check (Odd & Exactly {BIT_LENGTH} bits): "
+    print(f"[*] Validated (Odd & Exactly {BIT_LENGTH} bits): "
           f"{validate_candidate_properties(sample_candidate, BIT_LENGTH)}")
+
+    # Test Modular Exponentiation (Commit 2)
+    print(f"\n--- [Commit 2] Fast Modular Exponentiation (Square-and-Multiply) ---")
+    test_base = 2
+    test_exp = 65537
+    test_mod = sample_candidate
+    calc_res = modular_exponentiation(test_base, test_exp, test_mod)
+    expected_res = pow(test_base, test_exp, test_mod)
+    print(f"[*] Calculating ({test_base}^{test_exp}) mod candidate...")
+    print(f"    Computed Result: {calc_res}")
+    print(f"    Correctness check vs built-in pow(): {calc_res == expected_res}")
